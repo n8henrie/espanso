@@ -33,6 +33,11 @@ fn cc_config() {
   #[cfg(target_env = "gnu")]
   println!("cargo:rustc-link-lib=dylib=stdc++");
 
+  println!("cargo:warning=println debugging!");
+  if cfg!(feature = "avoid-gdi") {
+    println!("cargo:warning=Avoiding GDI!");
+  }
+
   if cfg!(not(feature = "avoid-gdi")) {
     println!("cargo:rustc-link-lib=dylib=gdiplus");
     println!("cargo:rustc-link-lib=dylib=gdi32");
