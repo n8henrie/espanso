@@ -30,7 +30,13 @@ fn cc_config() {
   println!("cargo:rustc-link-lib=static=espansoclipboard");
   println!("cargo:rustc-link-lib=dylib=user32");
 
+  println!("cargo:warning=println debugging in espanso-clipboard!");
+  if cfg!(feature = "avoid-gdi") {
+    println!("cargo:warning=Avoiding GDI in espanso-clipboard!");
+  }
+
   if cfg!(not(feature = "avoid-gdi")) {
+    println!("cargo:warning=Not avoiding GDI in espanso-clipboard!");
     println!("cargo:rustc-link-lib=dylib=gdiplus");
     println!("cargo:rustc-link-lib=dylib=gdi32");
   }

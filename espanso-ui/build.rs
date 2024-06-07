@@ -33,12 +33,13 @@ fn cc_config() {
   #[cfg(target_env = "gnu")]
   println!("cargo:rustc-link-lib=dylib=stdc++");
 
-  println!("cargo:warning=println debugging!");
+  println!("cargo:warning=println debugging in espanso-ui!");
   if cfg!(feature = "avoid-gdi") {
-    println!("cargo:warning=Avoiding GDI!");
+    println!("cargo:warning=Avoiding GDI in espanso-ui!");
   }
 
   if cfg!(not(feature = "avoid-gdi")) {
+    println!("cargo:warning=Not avoiding GDI in espanso-ui!");
     println!("cargo:rustc-link-lib=dylib=gdiplus");
     println!("cargo:rustc-link-lib=dylib=gdi32");
   }
