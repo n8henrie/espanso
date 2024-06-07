@@ -1,0 +1,12 @@
+diff --git a/espanso-detect/src/mac/native.mm b/espanso-detect/src/mac/native.mm
+index b96d7ac..aa7bcaa 100644
+--- a/espanso-detect/src/mac/native.mm
++++ b/espanso-detect/src/mac/native.mm
+@@ -137,6 +137,7 @@
+         }
+     }];
+   });
++  return NULL;
+ }
+ 
+ OSStatus hotkey_event_handler(EventHandlerCallRef _next, EventRef evt, void *userData)
