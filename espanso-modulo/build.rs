@@ -58,7 +58,7 @@ fn build_native() {
       .expect("unable to extract wxWidgets source dir");
 
     // Compile wxWidgets
-    let msvc_target = format!("{}-pc-windows-msvc", ARCH);
+    let msvc_target = format!("{ARCH}-pc-windows-msvc");
     let tool = cc::windows_registry::find_tool(&msvc_target, "devenv")
       .expect("unable to locate MSVC compiler, did you install Visual Studio?");
     let mut vcvars_path = None;
