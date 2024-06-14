@@ -94,6 +94,7 @@ fn build_native() {
         "makefile.vc",
         "BUILD=release",
         "TARGET_CPU=X64",
+        "USE_GDIPLUS=0",
         "&",
         "exit",
       ])
