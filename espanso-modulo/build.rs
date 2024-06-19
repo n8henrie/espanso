@@ -118,6 +118,16 @@ fn build_native() {
     panic!("wxWidgets is not compiled correctly, missing 'build/msw/vc_mswu_x64' directory")
   }
 
+  // ./wx-widgets-build/wx/build/msw/vc_mswu_x64/corelib_gdiplus.obj
+  std::fs::remove_file(
+    out_wx_dir
+      .join("build")
+      .join("msw")
+      .join("vc_mswu_x64")
+      .join("corelib_gdiplus.obj"),
+  )
+  .expect("unable to remove gdiplus");
+
   let wx_include_dir = out_wx_dir.join("include");
   let wx_include_msvc_dir = wx_include_dir.join("msvc");
   let wx_lib_dir = out_wx_dir.join("lib").join("vc_x64_lib");
