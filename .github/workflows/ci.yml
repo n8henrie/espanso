@@ -58,7 +58,7 @@ jobs:
         run: |
           set -x
           cargo make build-binary || true
-          find . -name '*gdiplus*.dll'
+          find . -name '*gdiplus*'
       - name: Check clippy
         run: |
           rustup component add clippy
