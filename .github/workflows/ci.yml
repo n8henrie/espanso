@@ -59,6 +59,9 @@ jobs:
           set -x
           cargo make build-binary || true
           find . -name '*gdiplus*'
+          find . -name '*wx-widgets-build*'
+          find . -name '*setup.h'
+          sed -i 's|^#define wxUSE_GRAPHICS_GDIPLUS|// &|' include/wx/msw/setup.h
       - name: Check clippy
         run: |
           rustup component add clippy
