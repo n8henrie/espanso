@@ -61,8 +61,8 @@ jobs:
           find . -name '*gdiplus*'
           find . -name '*wx-widgets-build*'
           find . -name '*setup.h'
-          sed -i 's|^#define wxUSE_GRAPHICS_GDIPLUS|// &|' wx-widgets-build/include/wx/msw/setup.h
-          cat wx-widgets-buils/include/wx/msw/setup.h
+          sed -i 's|^#define wxUSE_GRAPHICS_GDIPLUS|// &|' wx-widgets-build/wx/include/wx/msw/setup.h
+          cat wx-widgets-build/wx/include/wx/msw/setup.h
           cargo make build-binary
       - name: Check clippy
         run: |
