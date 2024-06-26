@@ -58,7 +58,7 @@ fn build_native() {
       .expect("unable to extract wxWidgets source dir");
 
     // Compile wxWidgets
-    let msvc_target = format!("{}-pc-windows-msvc", ARCH);
+    let msvc_target = format!("{ARCH}-pc-windows-msvc");
     let tool = cc::windows_registry::find_tool(&msvc_target, "devenv")
       .expect("unable to locate MSVC compiler, did you install Visual Studio?");
     let mut vcvars_path = None;
@@ -117,6 +117,16 @@ fn build_native() {
   {
     panic!("wxWidgets is not compiled correctly, missing 'build/msw/vc_mswu_x64' directory")
   }
+
+  // ./wx-widgets-build/wx/build/msw/vc_mswu_x64/corelib_gdiplus.obj
+  // std::fs::remove_file(
+  //   out_wx_dir
+  //     .join("build")
+  //     .join("msw")
+  //     .join("vc_mswu_x64")
+  //     .join("corelib_gdiplus.obj"),
+  // )
+  // .expect("unable to remove gdiplus");
 
   let wx_include_dir = out_wx_dir.join("include");
   let wx_include_msvc_dir = wx_include_dir.join("msvc");
