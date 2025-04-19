@@ -40,14 +40,18 @@ jobs:
       - name: Print target version
         run: |
           echo Using version ${{ needs.extract-version.outputs.espanso_version }}
-      - name: Install rust-script and cargo-make
-        run: |
-          cargo install rust-script --version "0.7.0"
-          cargo install --force cargo-make --version 0.34.0
       - name: Test
-        run: cargo make test-binary --profile release
+        run: |
+          cargo test \
+            --release \
+            --workspace \
+            --exclude espanso-modulo \
+            --exclude espanso-ipc \
+            --no-default-features \
+            --features native-tls
       - name: Build resources
-        run: cargo make build-windows-resources --profile release
+        # run: cargo make build-windows-resources --profile release
+        run: ./scripts/build_windows_resources.sh
       - name: Build installer
         run: cargo make build-windows-installer --profile release --skip-tasks build-windows-resources
       - name: Build portable mode archive 
