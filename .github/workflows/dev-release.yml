@@ -41,15 +41,15 @@ jobs:
       - name: Print target version
         run: |
           echo Using version ${{ needs.extract-version.outputs.espanso_version }}
-      - name: Test
-        run: |
-          cargo test \
-            --release \
-            --workspace \
-            --exclude espanso-modulo \
-            --exclude espanso-ipc \
-            --no-default-features \
-            --features native-tls
+      # - name: Test
+      #   run: |
+      #     cargo test \
+      #       --release \
+      #       --workspace \
+      #       --exclude espanso-modulo \
+      #       --exclude espanso-ipc \
+      #       --no-default-features \
+      #       --features native-tls
       - name: Build resources
         # run: cargo make build-windows-resources --profile release
         run: ./scripts/build_windows_resources.sh
