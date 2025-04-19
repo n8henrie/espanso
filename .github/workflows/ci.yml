@@ -107,6 +107,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libxkbcommon-dev libwxgtk3.0-gtk3-dev libdbus-1-dev
       - name: Run test suite
+        run: |
           cargo test \
             --workspace \
             --exclude espanso-modulo \
