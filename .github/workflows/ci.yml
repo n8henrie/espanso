@@ -33,13 +33,12 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libx11-dev libxtst-dev libxkbcommon-dev libdbus-1-dev libwxgtk3.0-gtk3-dev
-      - name: Install rust-script and cargo-make
-        run: |
-          cargo install rust-script --version "0.7.0"
-          cargo install cargo-make --version 0.34.0
       - name: Build
         run: |
-          cargo make build-binary
+          cargo build \
+            -p espanso \
+            --no-default-features \
+            --features modulo,native-tls
       - name: Check clippy
         run: |
           rustup component add clippy
@@ -65,12 +64,14 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libx11-dev libxtst-dev libxkbcommon-dev libdbus-1-dev libwxgtk3.0-gtk3-dev
-      - name: Install rust-script and cargo-make
-        run: |
-          cargo install rust-script --version "0.7.0"
-          cargo install cargo-make --version 0.34.0
       - name: Run test suite
-        run: cargo make test-binary
+        run: |
+          cargo test \
+            --workspace \
+            --exclude espanso-modulo \
+            --exclude espanso-ipc \
+            --no-default-features \
+            --features native-tls
   
   build-wayland:
     runs-on: ubuntu-latest
@@ -84,12 +85,12 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libxkbcommon-dev libwxgtk3.0-gtk3-dev libdbus-1-dev
-      - name: Install rust-script and cargo-make
-        run: |
-          cargo install rust-script --version "0.7.0"
-          cargo install cargo-make --version 0.34.0
       - name: Build
-        run: cargo make build-binary --env NO_X11=true
+        run: |
+          cargo build \
+            -p espanso \
+            --no-default-features \
+            --features wayland,modulo,native-tls
       - name: Check clippy
         run: |
           rustup component add clippy
@@ -107,12 +108,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libxkbcommon-dev libwxgtk3.0-gtk3-dev libdbus-1-dev
-      - name: Install rust-script and cargo-make
-        run: |
-          cargo install rust-script --version "0.7.0"
-          cargo install cargo-make --version 0.34.0
       - name: Run test suite
-        run: cargo make test-binary --env NO_X11=true
+          cargo test \
+            --workspace \
+            --exclude espanso-modulo \
+            --exclude espanso-ipc \
+            --no-default-features \
+            --features wayland,native-tls
   
   build-macos-arm:
     runs-on: macos-11
@@ -121,13 +123,14 @@ jobs:
       - name: Install target
         run: rustup update && rustup target add aarch64-apple-darwin
       - name: Install rust-script and cargo-make
-        run: |
-          cargo install rust-script --version "0.7.0"
-          cargo install cargo-make --version 0.34.0
       - name: Build
         run: |
-          cargo make build-macos-arm-binary
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
       #   with:
       #     limit-access-to-actor: true
+          cargo build \
+            --target aarch64-apple-darwin \
+            -p espanso \
+            --no-default-features \
+            --features modulo,native-tls
