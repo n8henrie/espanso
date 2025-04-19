@@ -11,6 +11,10 @@ on:
       - macos-signing
   pull_request:
 
+defaults:
+  run:
+    shell: bash
+
 env:
   CARGO_TERM_COLOR: always
 
