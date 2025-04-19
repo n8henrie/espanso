@@ -23,7 +23,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Check formatting
         run: |
           rustup component add rustfmt
@@ -55,7 +55,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Check formatting
         run: |
           rustup component add rustfmt
@@ -75,7 +75,7 @@ jobs:
   build-wayland:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Check formatting
         run: |
           rustup component add rustfmt
@@ -98,7 +98,7 @@ jobs:
   test-wayland:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Check formatting
         run: |
           rustup component add rustfmt
@@ -117,7 +117,7 @@ jobs:
   build-macos-arm:
     runs-on: macos-11
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install target
         run: rustup update && rustup target add aarch64-apple-darwin
       - name: Install rust-script and cargo-make
