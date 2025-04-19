@@ -11,6 +11,9 @@ main() {
   #   // Create the target directory
   mkdir -p "${TARGET_DIR}"
 
+  locate vcruntime140_1.dll || true
+
+  find /c -iname "vcruntime140_1.dll" 2> /dev/null || true
   #   // We first need to find all the DLLs to redistribute with the binary
   #   // These are found inside the MSVC compiler directory, usually in a place like:
   #   // C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Redist\MSVC\14.28.29910\x64\Microsoft.VC142.CRT
