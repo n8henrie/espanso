@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -Eeuf -o pipefail
+set -x
+
 readonly TARGET_DIR="target/windows/resources"
 main() {
   #   // Clean the target directory
