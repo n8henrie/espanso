@@ -6,7 +6,7 @@ set -x
 readonly TARGET_DIR="target/windows/resources"
 main() {
   #   // Clean the target directory
-  rm -r "${TARGET_DIR}"
+  rm -rf "${TARGET_DIR}"
 
   #   // Create the target directory
   mkdir -p "${TARGET_DIR}"
