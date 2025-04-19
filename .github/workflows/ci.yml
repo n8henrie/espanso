@@ -33,7 +33,7 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
         run: |
           sudo apt-get update
-          sudo apt-get install -y libx11-dev libxtst-dev libxkbcommon-dev libdbus-1-dev libwxgtk3.0-gtk3-dev
+          sudo apt-get install -y libx11-dev libxtst-dev libxkbcommon-dev libdbus-1-dev libwxgtk3.2-dev
       - name: Build
         run: |
           cargo build \
@@ -62,7 +62,7 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
         run: |
           sudo apt-get update
-          sudo apt-get install -y libx11-dev libxtst-dev libxkbcommon-dev libdbus-1-dev libwxgtk3.0-gtk3-dev
+          sudo apt-get install -y libx11-dev libxtst-dev libxkbcommon-dev libdbus-1-dev libwxgtk3.2-dev
       - name: Run test suite
         run: |
           cargo test \
@@ -83,7 +83,7 @@ jobs:
       - name: Install Linux dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libxkbcommon-dev libwxgtk3.0-gtk3-dev libdbus-1-dev
+          sudo apt-get install -y libxkbcommon-dev libwxgtk3.2-dev libdbus-1-dev
       - name: Build
         run: |
           cargo build \
@@ -106,7 +106,7 @@ jobs:
       - name: Install Linux dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libxkbcommon-dev libwxgtk3.0-gtk3-dev libdbus-1-dev
+          sudo apt-get install -y libxkbcommon-dev libwxgtk3.2-dev libdbus-1-dev
       - name: Run test suite
         run: |
           cargo test \
