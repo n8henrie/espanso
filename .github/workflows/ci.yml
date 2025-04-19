@@ -115,7 +115,7 @@ jobs:
             --features wayland,native-tls
   
   build-macos-arm:
-    runs-on: macos-11
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - name: Install target
