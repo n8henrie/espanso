@@ -50,39 +50,31 @@ main() {
   # };
 
   local version=$(toml_value_for_key_in_section version package "${espanso_toml_path}")
-  template=$(sed "s/{{{app_version}}}/${version}/g" <<<"${template}")
-
   local homepage=$(toml_value_for_key_in_section homepage package "${espanso_toml_path}")
-  template=$(sed "s/{{{app_url}}}/${homepage}/g" <<<"${template}")
-
   local license=${project_path}/LICENSE
-  template=$(sed "s/{{{app_license}}}/${license}/g" <<<"${template}")
-
-
   local icon=${script_resources_path}/icon.ico
-  template=$(sed "s/{{{app_icon}}}/${icon}/g" <<<"${template}")
-  
   local cli_helper=${script_resources_path}/espanso.cmd
-  template=$(sed "s/{{{cli_helper}}}/${cli_helper}/g" <<<"${template}")
-
-  template=$(sed "s/{{{output_dir}}}/${TARGET_DIR}/g" <<<"${template}")
-
-  template=$(sed "s/{{{output_name}}}/${INSTALLER_NAME}-${arch}/g" <<<"${template}")
-
-
   local exec_path=${RESOURCE_DIR}/espansod.exe
-  template=$(sed "s/{{{executable_path}}}/${exec_path}/g" <<<"${template}")
-
   include_paths=""
   while read -r dll; do
-      include_paths+="Source: \"${dll}\"; DestDir: \"{{app}}\"; Flags: ignoreversion\r\n",
+    include_paths+="Source: \"${dll}\"; DestDir: \"{{app}}\"; Flags: ignoreversion\r\n",
   done < <(find "${RESOURCE_DIR}" -name '*.dll')
-  template=$(sed "s/{{{dll_include}}}/${include_paths}/g" <<<"${template}")
+
+  : "${template//"{{{app_version}}}"/"${version}"}"
+  : "${_//"{{{app_url}}}"/"${homepage}"}"
+  : "${_//"{{{app_license}}}"/"${license}"}"
+  : "${_//"{{{app_icon}}}"/"${icon}"}"
+  : "${_//"{{{cli_helper}}}"/"${cli_helper}"}"
+  : "${_//"{{{output_dir}}}"/"${TARGET_DIR}"}"
+  : "${_//"{{{output_name}}}"/"${INSTALLER_NAME}-${arch}"}"
+  : "${_//"{{{executable_path}}}"/"${exec_path}"}"
+  : "${_//"{{{dll_include}}}"/"${include_paths}"}"
+
+  template=${_}
 
   local iss_setup=${TARGET_DIR}/setupscript.iss
   echo "${template}" > "${iss_setup}"
 
   iscc "${iss_setup}"
-  }
 }
 main "$@"
