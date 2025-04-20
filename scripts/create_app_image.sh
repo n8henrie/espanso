@@ -3,10 +3,10 @@
 set -Eeuf -o pipefail
 set -x
 
-readonly BUILD_DIR=${TARGET_DIR}/build
-readonly OUTPUT_DIR=${TARGET_DIR}/out
 readonly BASE_DIR=$(pwd)
 readonly TARGET_DIR=${BASE_DIR}/target/linux/AppImage
+readonly BUILD_DIR=${TARGET_DIR}/build
+readonly OUTPUT_DIR=${TARGET_DIR}/out
 
 main() {
   rm -ff "${TARGET_DIR}"
