@@ -172,88 +172,7 @@ jobs:
         run: |
           gh release upload ${{ needs.extract-version.outputs.espanso_version }} espanso-debian-x11-amd64.deb espanso-debian-wayland-amd64.deb espanso-debian-x11-amd64-sha256.txt espanso-debian-wayland-amd64-sha256.txt 
 
-
-  macos-intel:
-    needs: ["extract-version", "create-release"]
-    runs-on: macos-latest
-    environment: production
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Print target version
-        run: |
-          echo Using version ${{ needs.extract-version.outputs.espanso_version }}
-      - name: Test
-        # env:
-        #   MACOSX_DEPLOYMENT_TARGET: "10.13"
-        run: |
-          cargo test \
-            --workspace \
-            --exclude espanso-modulo \
-            --exclude espanso-ipc \
-            --no-default-features \
-            --features native-tls \
-            --release
-      - name: Build
-        # env:
-        #   MACOSX_DEPLOYMENT_TARGET: "10.13"
-        run: |
-          cargo build \
-            --release \
-            -p espanso \
-            --no-default-features \
-            --features modulo,native-tls
-          bash ./scripts/create_bundle.sh
-      - name: Codesign executable
-        env: 
-          MACOS_CERTIFICATE: ${{ secrets.PROD_MACOS_CERTIFICATE }}
-          MACOS_CERTIFICATE_PWD: ${{ secrets.PROD_MACOS_CERTIFICATE_PWD }}
-          MACOS_CERTIFICATE_NAME: ${{ secrets.PROD_MACOS_CERTIFICATE_NAME }}
-          MACOS_CI_KEYCHAIN_PWD: ${{ secrets.PROD_MACOS_CI_KEYCHAIN_PWD }}
-        run: |
-          echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
-          security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" buildespanso.keychain 
-          security default-keychain -s buildespanso.keychain
-          security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" buildespanso.keychain
-          security import certificate.p12 -k buildespanso.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" buildespanso.keychain
-          /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime target/mac/Espanso.app -v
-      - name: "Notarize executable"
-        env:
-          PROD_MACOS_NOTARIZATION_APPLE_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_APPLE_ID }}
-          PROD_MACOS_NOTARIZATION_TEAM_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_TEAM_ID }}
-          PROD_MACOS_NOTARIZATION_PWD: ${{ secrets.PROD_MACOS_NOTARIZATION_PWD }}
-        run: |
-          echo "Create keychain profile"
-          xcrun notarytool store-credentials "espanso-notarytool-profile" --apple-id "$PROD_MACOS_NOTARIZATION_APPLE_ID" --team-id "$PROD_MACOS_NOTARIZATION_TEAM_ID" --password "$PROD_MACOS_NOTARIZATION_PWD"
-
-          echo "Creating temp notarization archive"
-          ditto -c -k --keepParent "target/mac/Espanso.app" "notarization.zip"
-
-          echo "Notarize app"
-          xcrun notarytool submit "notarization.zip" --keychain-profile "espanso-notarytool-profile" --wait
-
-          echo "Attach staple"
-          xcrun stapler staple "target/mac/Espanso.app"
-      - name: Create ZIP archive
-        run: |
-          ditto -c -k --sequesterRsrc --keepParent target/mac/Espanso.app Espanso-Mac-Intel.zip
-      - name: Calculate hashes
-        run: |
-          shasum -a 256 Espanso-Mac-Intel.zip > Espanso-Mac-Intel.zip.sha256.txt
-      - uses: actions/upload-artifact@v4
-        name: "Upload artifacts"
-        with:
-          name: Mac Intel Artifacts
-          path: |
-            Espanso-Mac-Intel.zip
-            Espanso-Mac-Intel.zip.sha256.txt
-      - name: Upload artifacts to Github Releases (if master)
-        if: ${{ github.ref == 'refs/heads/master' }}
-        run: |
-          gh release upload ${{ needs.extract-version.outputs.espanso_version }} Espanso-Mac-Intel.zip Espanso-Mac-Intel.zip.sha256.txt
-  
-  macos-m1:
+  macos:
     needs: ["extract-version", "create-release"]
     runs-on: macos-latest
     environment: production
@@ -313,24 +232,24 @@ jobs:
           xcrun stapler staple "target/mac/Espanso.app"
       - name: Create ZIP archive
         run: |
-          ditto -c -k --sequesterRsrc --keepParent target/mac/Espanso.app Espanso-Mac-M1.zip
+          ditto -c -k --sequesterRsrc --keepParent target/mac/Espanso.app Espanso-Mac-Universal.zip
       - name: Calculate hashes
         run: |
-          shasum -a 256 Espanso-Mac-M1.zip > Espanso-Mac-M1.zip.sha256.txt
+          shasum -a 256 Espanso-Mac-Universal.zip > Espanso-Mac-Universal.zip.sha256.txt
       - uses: actions/upload-artifact@v4
         name: "Upload artifacts"
         with:
           name: Mac M1 Artifacts
           path: |
-            Espanso-Mac-M1.zip
-            Espanso-Mac-M1.zip.sha256.txt
+            Espanso-Mac-Universal.zip
+            Espanso-Mac-Universal.zip.sha256.txt
       - name: Upload artifacts to Github Releases (if master)
         if: ${{ github.ref == 'refs/heads/master' }}
         run: |
-          gh release upload ${{ needs.extract-version.outputs.espanso_version }} Espanso-Mac-M1.zip Espanso-Mac-M1.zip.sha256.txt
+          gh release upload ${{ needs.extract-version.outputs.espanso_version }} Espanso-Mac-Universal.zip Espanso-Mac-Universal.zip.sha256.txt
 
   macos-publish-homebrew:
-    needs: ["extract-version", "create-release", "macos-m1", "macos-intel"]
+    needs: ["extract-version", "create-release", "macos" ]
     runs-on: macos-latest
     environment: production
 

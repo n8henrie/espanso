@@ -139,52 +139,7 @@ jobs:
             espanso-debian-x11-amd64.deb
             espanso-debian-wayland-amd64.deb
 
-
-  macos-intel:
-    needs: ["extract-version"]
-    runs-on: macos-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Print target version
-        run: |
-          echo Using version ${{ needs.extract-version.outputs.espanso_version }}
-      - name: Test
-        run: |
-          cargo test \
-            --workspace \
-            --exclude espanso-modulo \
-            --exclude espanso-ipc \
-            --no-default-features \
-            --features native-tls \
-            --release
-        # env:
-        #   MACOSX_DEPLOYMENT_TARGET: "10.13"
-      - name: Build
-        run: |
-          cargo build \
-            --release \
-            -p espanso \
-            --no-default-features \
-            --features modulo,native-tls
-          bash ./scripts/create_bundle.sh
-        # env:
-        #   MACOSX_DEPLOYMENT_TARGET: "10.13"
-      - name: Create ZIP archive
-        run: |
-          ditto -c -k --sequesterRsrc --keepParent target/mac/Espanso.app Espanso-Mac-Intel.zip
-      - name: Calculate hashes
-        run: |
-          shasum -a 256 Espanso-Mac-Intel.zip > Espanso-Mac-Intel.zip.sha256.txt
-      - uses: actions/upload-artifact@v4
-        name: "Upload artifacts"
-        with:
-          name: Mac Intel Artifacts
-          path: |
-            Espanso-Mac-Intel.zip
-            Espanso-Mac-Intel.zip.sha256.txt
-  
-  macos-m1:
+    macos:
     needs: ["extract-version"]
     runs-on: macos-latest
 
@@ -212,14 +167,14 @@ jobs:
           bash ./scripts/create_bundle.sh
       - name: Create ZIP archive
         run: |
-          ditto -c -k --sequesterRsrc --keepParent target/mac/Espanso.app Espanso-Mac-M1.zip
+          ditto -c -k --sequesterRsrc --keepParent target/mac/Espanso.app Espanso-Mac-Universal.zip
       - name: Calculate hashes
         run: |
-          shasum -a 256 Espanso-Mac-M1.zip > Espanso-Mac-M1.zip.sha256.txt
+          shasum -a 256 Espanso-Mac-Universal.zip > Espanso-Mac-Universal.zip.sha256.txt
       - uses: actions/upload-artifact@v4
         name: "Upload artifacts"
         with:
-          name: Mac M1 Artifacts
+          name: MacOS Artifacts
           path: |
-            Espanso-Mac-M1.zip
-            Espanso-Mac-M1.zip.sha256.txt
+            Espanso-Mac-Universal.zip
+            Espanso-Mac-Universal.zip.sha256.txt
