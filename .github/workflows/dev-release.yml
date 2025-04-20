@@ -56,7 +56,7 @@ jobs:
       #       --features native-tls
       - name: Build resources
         # run: cargo make build-windows-resources --profile release
-        run: ./scripts/build_windows_resources.sh
+        run: EXEC_PATH=./target/release/espanso ./scripts/build_windows_resources.sh
       - name: Build installer
         run: cargo make build-windows-installer --profile release --skip-tasks build-windows-resources
       - name: Build portable mode archive 
