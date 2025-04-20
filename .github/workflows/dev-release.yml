@@ -58,7 +58,7 @@ jobs:
         # run: cargo make build-windows-resources --profile release
         run: EXEC_PATH=./target/release/espanso ./scripts/build_windows_resources.sh
       - name: Build installer
-        run: cargo make build-windows-installer --profile release --skip-tasks build-windows-resources
+        run: EXEC_PATH=./target/release/espanso ./scripts/build_windows_installer.sh
       - name: Build portable mode archive 
         run: cargo make build-windows-portable --profile release --skip-tasks build-windows-resources
       - name: Create portable mode archive
