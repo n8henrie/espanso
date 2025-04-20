@@ -1,6 +1,6 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
-set -Eeuf -o pipfail
+set -Eeuf -o pipefail
 #TODO
 set -x
 
