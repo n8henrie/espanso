@@ -139,7 +139,7 @@ jobs:
             espanso-debian-x11-amd64.deb
             espanso-debian-wayland-amd64.deb
 
-    macos:
+  macos:
     needs: ["extract-version"]
     runs-on: macos-latest
 
