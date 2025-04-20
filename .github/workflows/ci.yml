@@ -120,14 +120,19 @@ jobs:
             --no-default-features \
             --features wayland,native-tls
   
-  build-macos-arm:
+  build-macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - name: Install target
-        run: rustup update && rustup target add aarch64-apple-darwin
+        run: rustup update && rustup target add aarch64-apple-darwin x86_64-apple-darwin
       - name: Build
         run: |
+          cargo build \
+            --target x86_64-apple-darwin \
+            -p espanso \
+            --no-default-features \
+            --features modulo,native-tls
           cargo build \
             --target aarch64-apple-darwin \
             -p espanso \
