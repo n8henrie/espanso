@@ -26,7 +26,6 @@ main() {
 
   # Apply a workaround to fix this issue: https://github.com/federico-terzi/espanso/issues/900
   # See: https://github.com/project-slippi/Ishiiruka/issues/323#issuecomment-977415376
-
   echo "Applying patch for libgmodule"
 
   espanso_appimage=$(find . -maxdepth 1 -name 'Espanso*.AppImage' -print -quit)
