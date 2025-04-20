@@ -269,6 +269,12 @@ jobs:
         run: |
           cargo build \
             -p espanso \
+            --target x86_64-apple-darwin \
+            --release \
+            --no-default-features \
+            --features native-tls,modulo
+          cargo build \
+            -p espanso \
             --target aarch64-apple-darwin \
             --release \
             --no-default-features \
