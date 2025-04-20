@@ -25,7 +25,7 @@ main() {
   mkdir -p "${TARGET_DIR}"
 
   local vcruntime_dll=$(find "/c/Program Files/Microsoft Visual Studio" -path "*/VC/Redist/MSVC/*" -name "vcruntime140_1.dll" -print -quit)
-  local tooldir=$(realpath "$(dirname "${vcruntime_dll}")")
+  local tooldir=$(dirname "${vcruntime_dll}")
 
   find "${tooldir}" -name '*.dll' -exec cp -t "${TARGET_DIR}" {} +
 
