@@ -1,24 +1,37 @@
-set -e
+#!/usr/bin/bash
 
-FINAL_EXEC_PATH=$EXEC_PATH
+set -Eeuf -o pipfail
+#TODO
+set -x
 
-if [ $BUILD_ARCH != "current" ]; then
-  FINAL_EXEC_PATH=$(echo $EXEC_PATH | sed "s/target\//target\/$BUILD_ARCH\//g")
-fi
+main() {
+  # local FINAL_EXEC_PATH=${EXEC_PATH}
 
-TARGET_DIR=target/mac/Espanso.app
+  # if [[ $BUILD_ARCH != "current" ]]; then
+  #   FINAL_EXEC_PATH=$(echo $EXEC_PATH | sed "s/target\//target\/$BUILD_ARCH\//g")
+  # fi
 
-rm -Rf $TARGET_DIR
+  TARGET_DIR=target/mac/Espanso.app
 
-VERSION=$(cat espanso/Cargo.toml | grep version | head -1 | awk -F '"' '{ print $2 }')
+  rm -rf "${TARGET_DIR}"
 
-mkdir -p $TARGET_DIR/Contents
-mkdir -p $TARGET_DIR/Contents/MacOS
-mkdir -p $TARGET_DIR/Contents/Resources
+  local VERSION=$(awk -F '"' '/^version/ { print $2; exit }' espanso/Cargo.toml)
 
-sed	-e "s/VERSION/$VERSION/" espanso/src/res/macos/Info.plist > $TARGET_DIR/Contents/Info.plist
+  mkdir -p "${TARGET_DIR}"/Contents
+  mkdir -p "${TARGET_DIR}"/Contents/MacOS
+  mkdir -p "${TARGET_DIR}"/Contents/Resources
 
-/bin/echo "APPL????" > $TARGET_DIR/Contents/PkgInfo
+  sed -e "s/VERSION/${VERSION}/" espanso/src/res/macos/Info.plist > "${TARGET_DIR}"/Contents/Info.plist
 
-cp -f espanso/src/res/macos/icon.icns $TARGET_DIR/Contents/Resources/icon.icns
-cp -f $FINAL_EXEC_PATH $TARGET_DIR/Contents/MacOS/espanso
+  /bin/echo "APPL????" > "${TARGET_DIR}"/Contents/PkgInfo
+
+  cp -f espanso/src/res/macos/icon.icns "${TARGET_DIR}"/Contents/Resources/icon.icns
+
+  lipo -create \
+    -output "${TARGET_DIR}/Contents/MacOS/espanso" \
+    target/x86_64-apple-darwin/release/espanso target/aarch64-apple-darwin/release/espanso
+
+  #TODO
+  find "${TARGET_DIR}" -ls
+}
+main "$@"
