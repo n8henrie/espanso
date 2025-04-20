@@ -28,7 +28,7 @@ jobs:
       - name: "Extract version"
         id: "version"
         run: |
-          ESPANSO_VERSION=$(awk -F '"' '/^version/ { print $2; exit }' espanso/Cargo.toml)
+          ESPANSO_VERSION=$(grep '^version' espanso/Cargo.toml | awk -F '"' '{ print $2 }')
           echo version: $ESPANSO_VERSION
           echo "::set-output name=version::v$ESPANSO_VERSION"
 
@@ -56,39 +56,42 @@ jobs:
     runs-on: windows-latest
     environment: production
 
-    defaults:
-      run:
-        shell: bash
-
     steps:
       - uses: actions/checkout@v4
       - name: Print target version
         run: |
           echo Using version ${{ needs.extract-version.outputs.espanso_version }}
-      - name: Install rust-script and cargo-make
-        run: |
-          cargo install rust-script --version "0.7.0"
-          cargo install --force cargo-make --version 0.34.0
       - name: Test
-        run: cargo make test-binary --profile release
+        run: |
+          cargo test \
+            --workspace \
+            --exclude espanso-modulo \
+            --exclude espanso-ipc \
+            --no-default-features \
+            --features native-tls \
+            --release
       - name: Build resources
-        run: cargo make build-windows-resources --profile release
+        run: EXEC_PATH=./target/release/espanso ./scripts/build_windows_resources.sh
       - name: Sign resources
-        run: cargo make sign-windows-resources
+        run: bash ./scripts/sign_windows_exe.sh
         env:
+          TARGET_SIGNTOOL_FILE: target/windows/resources/espansod.exe
           CODESIGN_PWD: ${{ secrets.WIN_CODESIGN_PWD }}
           CODESIGN_CROSS_SIGNED_B64: ${{ secrets.WIN_CODESIGN_INTERMEDIATE_B64 }}
           CODESIGN_CERTIFICATE_B64: ${{ secrets.WIN_CODESIGN_CERTIFICATE_B64 }}
       - name: Build installer
-        run: cargo make build-windows-installer --profile release --skip-tasks build-windows-resources
+        run: EXEC_PATH=./target/release/espanso ./scripts/build_windows_installer.sh
       - name: Sign installer
-        run: cargo make sign-windows-installer
+        run: bash ./scripts/sign_windows_exe.sh
         env:
+          TARGET_SIGNTOOL_FILE: target/windows/installer/Espanso-Win-Installer-x86_64.exe
           CODESIGN_PWD: ${{ secrets.WIN_CODESIGN_PWD }}
           CODESIGN_CROSS_SIGNED_B64: ${{ secrets.WIN_CODESIGN_INTERMEDIATE_B64 }}
           CODESIGN_CERTIFICATE_B64: ${{ secrets.WIN_CODESIGN_CERTIFICATE_B64 }}
       - name: Build portable mode archive 
-        run: cargo make build-windows-portable --profile release --skip-tasks build-windows-resources
+        run: ./scripts/build_windows_portable.sh
+        env:
+          EXEC_PATH: ./target/release/espanso
       - name: Create portable mode archive
         shell: powershell
         run: |
@@ -172,7 +175,7 @@ jobs:
 
   macos-intel:
     needs: ["extract-version", "create-release"]
-    runs-on: macos-11
+    runs-on: macos-latest
     environment: production
 
     steps:
@@ -180,18 +183,27 @@ jobs:
       - name: Print target version
         run: |
           echo Using version ${{ needs.extract-version.outputs.espanso_version }}
-      - name: Install rust-script and cargo-make
-        run: |
-          cargo install rust-script --version "0.7.0"
-          cargo install --force cargo-make --version 0.34.0
       - name: Test
-        run: cargo make test-binary --profile release
-        env:
-          MACOSX_DEPLOYMENT_TARGET: "10.13"
+        # env:
+        #   MACOSX_DEPLOYMENT_TARGET: "10.13"
+        run: |
+          cargo test \
+            --workspace \
+            --exclude espanso-modulo \
+            --exclude espanso-ipc \
+            --no-default-features \
+            --features native-tls \
+            --release
       - name: Build
-        run: cargo make create-bundle --profile release
-        env:
-          MACOSX_DEPLOYMENT_TARGET: "10.13"
+        # env:
+        #   MACOSX_DEPLOYMENT_TARGET: "10.13"
+        run: |
+          cargo build \
+            --release \
+            -p espanso \
+            --no-default-features \
+            --features modulo,native-tls
+          bash ./scripts/create_bundle.sh
       - name: Codesign executable
         env: 
           MACOS_CERTIFICATE: ${{ secrets.PROD_MACOS_CERTIFICATE }}
@@ -243,7 +255,7 @@ jobs:
   
   macos-m1:
     needs: ["extract-version", "create-release"]
-    runs-on: macos-11
+    runs-on: macos-latest
     environment: production
 
     steps:
@@ -253,12 +265,15 @@ jobs:
           echo Using version ${{ needs.extract-version.outputs.espanso_version }}
       - name: Install rust target
         run: rustup update && rustup target add aarch64-apple-darwin
-      - name: Install rust-script and cargo-make
-        run: |
-          cargo install rust-script --version "0.7.0"
-          cargo install --force cargo-make --version 0.34.0
       - name: Build
-        run: cargo make create-bundle --profile release --env BUILD_ARCH=aarch64-apple-darwin
+        run: |
+          cargo build \
+            -p espanso \
+            --target aarch64-apple-darwin \
+            --release \
+            --no-default-features \
+            --features native-tls,modulo
+          bash ./scripts/create_bundle.sh
       - name: Codesign executable
         env: 
           MACOS_CERTIFICATE: ${{ secrets.PROD_MACOS_CERTIFICATE }}
@@ -310,7 +325,7 @@ jobs:
 
   macos-publish-homebrew:
     needs: ["extract-version", "create-release", "macos-m1", "macos-intel"]
-    runs-on: macos-11
+    runs-on: macos-latest
     environment: production
 
     steps:

@@ -45,22 +45,27 @@ jobs:
       - name: Print target version
         run: |
           echo Using version ${{ needs.extract-version.outputs.espanso_version }}
-      # - name: Test
-      #   run: |
-      #     cargo test \
-      #       --release \
-      #       --workspace \
-      #       --exclude espanso-modulo \
-      #       --exclude espanso-ipc \
-      #       --no-default-features \
-      #       --features native-tls
+      - name: Test
+        run: |
+          cargo test \
+            --release \
+            --workspace \
+            --exclude espanso-modulo \
+            --exclude espanso-ipc \
+            --no-default-features \
+            --features native-tls
       - name: Build resources
-        # run: cargo make build-windows-resources --profile release
-        run: EXEC_PATH=./target/release/espanso ./scripts/build_windows_resources.sh
+        run: ./scripts/build_windows_resources.sh
+        env:
+          EXEC_PATH: ./target/release/espanso
       - name: Build installer
-        run: EXEC_PATH=./target/release/espanso ./scripts/build_windows_installer.sh
+        run:  ./scripts/build_windows_installer.sh
+        env:
+          EXEC_PATH: ./target/release/espanso
       - name: Build portable mode archive 
-        run: EXEC_PATH=./target/release/espanso ./scripts/build_windows_portable.sh
+        run: ./scripts/build_windows_portable.sh
+        env:
+          EXEC_PATH: ./target/release/espanso
       - name: Create portable mode archive
         shell: powershell
         run: |

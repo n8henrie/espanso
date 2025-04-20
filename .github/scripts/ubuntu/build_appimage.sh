@@ -4,10 +4,16 @@ set -e
 
 echo "Testing espanso..."
 cd espanso
-cargo make test-binary --profile release
+cargo test \
+  --release \
+  --workspace \
+  --exclude espanso-modulo \
+  --exclude espanso-ipc \
+  --no-default-features \
+  --features native-tls
 
 echo "Building espanso and creating AppImage"
-cargo make create-app-image --profile release
+./scripts/create_app_image.sh
 
 cd ..
 cp espanso/target/linux/AppImage/out/Espanso-*.AppImage Espanso-X11.AppImage
