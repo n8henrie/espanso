@@ -1,6 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-set -e
+set -Eeuf -o pipefail
+set -x
 
 echo "Testing espanso..."
 cd espanso
@@ -13,7 +14,7 @@ cargo test \
   --features native-tls
 
 echo "Building espanso and creating AppImage"
-./scripts/create_app_image.sh
+bash ./scripts/create_app_image.sh
 
 cd ..
 cp espanso/target/linux/AppImage/out/Espanso-*.AppImage Espanso-X11.AppImage
