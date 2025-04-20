@@ -16,7 +16,7 @@ main() {
   echo "Building AppImage into ${OUTPUT_DIR}"
   pushd "${OUTPUT_DIR}"
 
-  linuxdeploy=$(find "${BASE_DIR}"/scripts/vendor-app-image -maxdepth 1 -name 'linuxdeploy*.AppImage')
+  linuxdeploy=$(find "${BASE_DIR}"/scripts/vendor-app-image -maxdepth 1 -name 'linuxdeploy*.AppImage' -print -quit)
   "${linuxdeploy}" --appimage-extract-and-run -e "${BASE_DIR}/${EXEC_PATH}" \
     -d "${BASE_DIR}/espanso/src/res/linux/espanso.desktop" \
     -i "${BASE_DIR}/espanso/src/res/linux/icon.png" \
@@ -29,13 +29,13 @@ main() {
 
   echo "Applying patch for libgmodule"
 
-  espanso_appimage=$(find . -maxdepth 1 -name 'Espanso*.AppImage')
+  espanso_appimage=$(find . -maxdepth 1 -name 'Espanso*.AppImage' -print -quit)
 
   "${espanso_appimage}" --appimage-extract
   rm -Rf ./Espanso*.AppImage
   rm -rf squashfs-root/usr/lib/libgmodule*
 
-  appimagetool=$(find "${BASE_DIR}"/scripts/vendor-app-image -maxdepth 1 -name 'appimagetool*.AppImage')
+  appimagetool=$(find "${BASE_DIR}"/scripts/vendor-app-image -maxdepth 1 -name 'appimagetool*.AppImage' -print -quit)
   "${appimagetool}" --appimage-extract-and-run -v squashfs-root
   rm -rf squashfs-root
 }
