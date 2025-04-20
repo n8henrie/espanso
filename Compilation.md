@@ -13,14 +13,6 @@ These are the basic tools required to build espanso:
   * On macOS, you should use the official build tools that come with Xcode. If you don't want to install Xcode, you should be able to download only the build tools by executing `xcode-select —install` and following the instructions.
   * On Linux, you should use the default C/C++ compiler (it's usually GCC). On Ubuntu/Debian systems, you can install them with `sudo apt install build-essential`
 
-* Espanso heavily relies on [cargo make](https://github.com/sagiegurari/cargo-make) for the various packaging
-steps. You can install it by running:
-
-```
-cargo install rust-script --version "0.7.0"
-cargo install --force cargo-make --version 0.34.0
-```
-
 # Windows
 
 After installing the prerequisites, you are ready to compile Espanso on Windows.
@@ -32,7 +24,7 @@ Espanso supports multiple targets on Windows: plain executable, installer and po
 If you only want to build the "plain" Espanso executable, you can do so by running:
 
 ```
-cargo make build-binary --profile release
+cargo build --release
 ```
 
 This will create an `espanso` executable in the `target/release` directory.
@@ -42,7 +34,8 @@ This will create an `espanso` executable in the `target/release` directory.
 If you want to build the Installer (the executable that installs Espanso on a machine), you can run:
 
 ```
-cargo make build-windows-installer --profile release
+cargo build --release
+./scripts/build_windows_installer.sh
 ```
 
 This will generate the installer in the `target/windows/installer` directory.
@@ -52,7 +45,8 @@ This will generate the installer in the `target/windows/installer` directory.
 You can also generate a portable-mode bundle (a self-contained ZIP archive that does not require installation) by running:
 
 ```
-cargo make build-windows-portable --profile release
+cargo build --release
+./scripts/build_windows_portable.sh
 ```
 This will generate the executable in the `target/windows/portable` directory.
 There are README instructions inside!.
@@ -68,7 +62,8 @@ Espanso supports two targets on macOS: plain executable and App Bundle. For most
 You can build the App Bundle by running:
 
 ```
-cargo make create-bundle --profile release
+cargo build --release
+./scripts/create_bundle.sh
 ```
 
 This will create the `Espanso.app` bundle in the `target/mac` directory.
@@ -96,7 +91,8 @@ it also bundles all the required libraries.
 You can create the AppImage by running (this will work on X11 systems):
 
 ```
-cargo make create-app-image --profile release
+cargo build --release
+./scripts/create_app_image.sh
 ```
 
 You will find the resulting AppImage in the `target/linux/AppImage/out` folder.
@@ -106,7 +102,7 @@ You will find the resulting AppImage in the `target/linux/AppImage/out` folder.
 You can build the Espanso binary on X11 by running the following command:
 
 ```
-cargo make build-binary --profile release
+cargo build --release
 ```
 
 You'll then find the `espanso` binary in the `target/release` directory.
@@ -116,7 +112,7 @@ You'll then find the `espanso` binary in the `target/release` directory.
 You can build Espanso on Wayland by running:
 
 ```
-cargo make build-binary --env NO_X11=true --profile release
+cargo build --release --features wayland,modulo,native-tls
 ```
 
 You'll then find the `espanso` binary in the `target/release` directory.
@@ -130,7 +126,6 @@ Espanso offers a few flags that might be necessary if you want to further tune t
 Espanso includes a component known as _modulo_, which handles most of the graphical-related parts of the tool.
 For example, the Search bar or Forms are handled by it.
 
-If you don't want them, you can pass the `--env NO_MODULO=true` flag to any of the previous `cargo make` commands
-to remove support for it.
+If you don't want them, you can build without the `modulo` feature to remove support for it.
 
 Keep in mind that espanso was designed with modulo as a first class citizen, so the experience might be far from perfect without it.
