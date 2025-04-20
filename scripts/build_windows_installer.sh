@@ -33,12 +33,10 @@ main() {
   # // Check InnoSetup
   # Command::new("iscc").output().expect("Could not find Inno Setup compiler. Please install it from here: http://www.jrsoftware.org/isdl.php");
 
-  local makefile_path=${CARGO_MAKE_MAKEFILE_PATH}
-  local project_path=$(dirname "${makefile_path}")
-  local script_resources_path=${project_path}/scripts/resources/windows
+  local script_resources_path=./scripts/resources/windows
   local template_path=${script_resources_path}/setupscript.iss
 
-  local template=$(cat "${template_path}")
+  local template=$(< "${template_path}")
 
   local espanso_toml_path=${project_path}/espanso/Cargo.toml
   local arch=${BUILD_ARCH}
