@@ -287,7 +287,7 @@ jobs:
           MACOS_CERTIFICATE_NAME: ${{ secrets.PROD_MACOS_CERTIFICATE_NAME }}
           MACOS_CI_KEYCHAIN_PWD: ${{ secrets.PROD_MACOS_CI_KEYCHAIN_PWD }}
         run: |
-          echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+          echo "${MACOS_CERTIFICATE}" | base64 --decode > certificate.p12
           security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" buildespanso.keychain 
           security default-keychain -s buildespanso.keychain
           security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" buildespanso.keychain
