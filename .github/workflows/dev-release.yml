@@ -60,7 +60,7 @@ jobs:
       - name: Build installer
         run: EXEC_PATH=./target/release/espanso ./scripts/build_windows_installer.sh
       - name: Build portable mode archive 
-        run: cargo make build-windows-portable --profile release --skip-tasks build-windows-resources
+        run: EXEC_PATH=./target/release/espanso ./scripts/build_windows_portable.sh
       - name: Create portable mode archive
         shell: powershell
         run: |
@@ -130,25 +130,34 @@ jobs:
 
   macos-intel:
     needs: ["extract-version"]
-    runs-on: macos-11
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v4
       - name: Print target version
         run: |
           echo Using version ${{ needs.extract-version.outputs.espanso_version }}
-      - name: Install rust-script and cargo-make
-        run: |
-          cargo install rust-script --version "0.7.0"
-          cargo install --force cargo-make --version 0.34.0
       - name: Test
-        run: cargo make test-binary --profile release
-        env:
-          MACOSX_DEPLOYMENT_TARGET: "10.13"
+        run: |
+          cargo test \
+            --workspace \
+            --exclude espanso-modulo \
+            --exclude espanso-ipc \
+            --no-default-features \
+            --features native-tls \
+            --release
+        # env:
+        #   MACOSX_DEPLOYMENT_TARGET: "10.13"
       - name: Build
-        run: cargo make create-bundle --profile release
-        env:
-          MACOSX_DEPLOYMENT_TARGET: "10.13"
+        run: |
+          cargo build \
+            --release \
+            -p espanso \
+            --no-default-features \
+            --features modulo,native-tls
+          bash ./scripts/create_bundle.sh
+        # env:
+        #   MACOSX_DEPLOYMENT_TARGET: "10.13"
       - name: Create ZIP archive
         run: |
           ditto -c -k --sequesterRsrc --keepParent target/mac/Espanso.app Espanso-Mac-Intel.zip
@@ -165,7 +174,7 @@ jobs:
   
   macos-m1:
     needs: ["extract-version"]
-    runs-on: macos-11
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -174,12 +183,15 @@ jobs:
           echo Using version ${{ needs.extract-version.outputs.espanso_version }}
       - name: Install rust target
         run: rustup update && rustup target add aarch64-apple-darwin
-      - name: Install rust-script and cargo-make
-        run: |
-          cargo install rust-script --version "0.7.0"
-          cargo install --force cargo-make --version 0.34.0
       - name: Build
-        run: cargo make create-bundle --profile release --env BUILD_ARCH=aarch64-apple-darwin
+        run: |
+          cargo build \
+            -p espanso \
+            --target aarch64-apple-darwin \
+            --release \
+            --no-default-features \
+            --features native-tls,modulo
+          bash ./scripts/create_bundle.sh
       - name: Create ZIP archive
         run: |
           ditto -c -k --sequesterRsrc --keepParent target/mac/Espanso.app Espanso-Mac-M1.zip
