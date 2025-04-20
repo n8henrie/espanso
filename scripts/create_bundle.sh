@@ -5,12 +5,6 @@ set -Eeuf -o pipefail
 set -x
 
 main() {
-  # local FINAL_EXEC_PATH=${EXEC_PATH}
-
-  # if [[ $BUILD_ARCH != "current" ]]; then
-  #   FINAL_EXEC_PATH=$(echo $EXEC_PATH | sed "s/target\//target\/$BUILD_ARCH\//g")
-  # fi
-
   TARGET_DIR=target/mac/Espanso.app
 
   rm -rf "${TARGET_DIR}"
@@ -30,8 +24,5 @@ main() {
   lipo -create \
     -output "${TARGET_DIR}/Contents/MacOS/espanso" \
     target/x86_64-apple-darwin/release/espanso target/aarch64-apple-darwin/release/espanso
-
-  #TODO
-  find "${TARGET_DIR}" -ls
 }
 main "$@"
