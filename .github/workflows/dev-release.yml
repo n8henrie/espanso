@@ -106,10 +106,13 @@ jobs:
         run: |
           sudo docker build -t espanso-ubuntu . -f .github/scripts/ubuntu/Dockerfile
       - name: Build AppImage
-        env:
-          EXEC_PATH: target/release/espanso
         run: |
-          sudo docker run --rm -v "$(pwd):/shared" espanso-ubuntu espanso/.github/scripts/ubuntu/build_appimage.sh
+          sudo docker run \
+            --rm \
+            -v "$(pwd):/shared" \
+            -e EXEC_PATH=target/release/espanso \
+            espanso-ubuntu \
+            espanso/.github/scripts/ubuntu/build_appimage.sh
       - uses: actions/upload-artifact@v4
         name: "Upload artifacts"
         with:
