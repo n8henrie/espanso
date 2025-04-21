@@ -17,7 +17,7 @@ get_signtool_location() {
 }
 
 main() {
-  rm -rf "${CERTIFICATE_TARGET_DIR}"
+  rm -rf -- "${CERTIFICATE_TARGET_DIR}"
   mkdir -p "${CERTIFICATE_TARGET_DIR}"
 
   local signtool_path=$(get_signtool_location)
@@ -33,13 +33,13 @@ main() {
   base64 \
     -o "${cross_signed_certificate_path}" \
     <<< "${cross_signed_certificate_b64}"
-  trap "rm -f \"${cross_signed_certificate_path}\"" EXIT
+  trap "rm -f -- '${cross_signed_certificate_path}'" EXIT
 
   local codesign_certificate_path=${CERTIFICATE_TARGET_DIR}/codesign.pfx
   base64 \
     -o "${codesign_certificate_path}" \
     <<< "${CODESIGN_CERTIFICATE_B64}"
-  trap "rm -f \"${codesign_certificate_path}\"" EXIT
+  trap "rm -f -- '${codesign_certificate_path}'" EXIT
 
   "${signtool_path}" \
     sign \

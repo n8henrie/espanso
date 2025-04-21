@@ -25,7 +25,7 @@ toml_value_for_key_in_section() {
 
 main() {
   # Clean the target directory
-  rm -rf "${TARGET_DIR}"
+  rm -rf -- "${TARGET_DIR}"
 
   # Create the target directory
   mkdir -p "${TARGET_DIR}"
@@ -40,13 +40,7 @@ main() {
   local template=$(< "${template_path}")
 
   local espanso_toml_path=${project_path}/espanso/Cargo.toml
-  local arch=${BUILD_ARCH}
-
-  # let arch = if arch == "current" {
-  #   std::env::consts::ARCH
-  # } else {
-  #   &arch
-  # };
+  local arch=$(arch)
 
   local version=$(toml_value_for_key_in_section version package "${espanso_toml_path}")
   local homepage=$(toml_value_for_key_in_section homepage package "${espanso_toml_path}")

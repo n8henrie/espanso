@@ -8,7 +8,7 @@ RESOURCE_DIR=target/windows/resources
 
 main() {
   # Clean the target directory
-  rm -rf "${TARGET_DIR}"
+  rm -rf -- "${TARGET_DIR}"
 
   cp -a "${RESOURCE_DIR}" "${TARGET_DIR}"
 

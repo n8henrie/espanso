@@ -12,7 +12,7 @@ main() {
   # Removing the v suffix, if present
   local VERSION=${VERSION#"v"}
 
-  rm -rf target/homebrew
+  rm -rf -- target/homebrew
   mkdir -p target/homebrew/artifacts
 
   echo "Targeting version ${VERSION}"

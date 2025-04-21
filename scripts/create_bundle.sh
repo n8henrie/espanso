@@ -7,7 +7,7 @@ set -x
 main() {
   TARGET_DIR=target/mac/Espanso.app
 
-  rm -rf "${TARGET_DIR}"
+  rm -rf -- "${TARGET_DIR}"
 
   local VERSION=$(awk -F '"' '/^version/ { print $2; exit }' espanso/Cargo.toml)
 

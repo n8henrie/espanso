@@ -9,7 +9,7 @@ readonly BUILD_DIR=${TARGET_DIR}/build
 readonly OUTPUT_DIR=${TARGET_DIR}/out
 
 main() {
-  rm -ff "${TARGET_DIR}"
+  rm -rf -- "${TARGET_DIR}"
   mkdir -p "${OUTPUT_DIR}"
   mkdir -p "${BUILD_DIR}"
 
@@ -22,7 +22,8 @@ main() {
     -i "${BASE_DIR}/espanso/src/res/linux/icon.png" \
     --appdir "${BUILD_DIR}" \
     --output appimage
-  chmod +x ./Espanso*.AppImage
+
+  find . -maxdepth 1 -name 'Espanso*.AppImage' -exec chmod +x {} \; -quit
 
   # Apply a workaround to fix this issue: https://github.com/federico-terzi/espanso/issues/900
   # See: https://github.com/project-slippi/Ishiiruka/issues/323#issuecomment-977415376
@@ -31,11 +32,18 @@ main() {
   espanso_appimage=$(find . -maxdepth 1 -name 'Espanso*.AppImage' -print -quit)
 
   "${espanso_appimage}" --appimage-extract
-  rm -Rf ./Espanso*.AppImage
-  rm -rf squashfs-root/usr/lib/libgmodule*
 
-  appimagetool=$(find "${BASE_DIR}"/scripts/vendor-app-image -maxdepth 1 -name 'appimagetool*.AppImage' -print -quit)
+  find . -maxdepth 1 -name 'Espanso*.AppImage' -delete -quit
+  find squashfs-root/usr/lib -maxdepth 1 -name 'libgmodule*' -delete -quit
+
+  appimagetool=$(
+    find "${BASE_DIR}"/scripts/vendor-app-image \
+      -maxdepth 1 \
+      -name 'appimagetool*.AppImage' \
+      -print \
+      -quit
+  )
   "${appimagetool}" --appimage-extract-and-run -v squashfs-root
-  rm -rf squashfs-root
+  rm -rf -- squashfs-root
 }
 main "$@"

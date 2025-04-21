@@ -19,7 +19,7 @@ main() {
   fi
 
   # Clean the target directory
-  rm -rf "${TARGET_DIR}"
+  rm -rf -- "${TARGET_DIR}"
 
   # Create the target directory
   mkdir -p "${TARGET_DIR}"
