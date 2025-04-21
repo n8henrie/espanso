@@ -136,6 +136,13 @@ jobs:
       - name: Build docker image
         run: |
           sudo docker build -t espanso-ubuntu . -f .github/scripts/ubuntu/Dockerfile
+      - name: Build
+        run: |
+          cargo build \
+            -p espanso \
+            --release \
+            --no-default-features \
+            --features vendored-tls,modulo
       - name: Build AppImage
         run: |
           sudo docker run \
@@ -166,6 +173,13 @@ jobs:
       - name: Print target version
         run: |
           echo Using version ${{ needs.extract-version.outputs.espanso_version }}
+      - name: Build
+        run: |
+          cargo build \
+            -p espanso \
+            --release \
+            --no-default-features \
+            --features vendored-tls,modulo
       - name: Build docker image
         run: |
           sudo docker build -t espanso-ubuntu . -f .github/scripts/ubuntu/Dockerfile
