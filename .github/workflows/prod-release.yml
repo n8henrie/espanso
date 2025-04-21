@@ -29,8 +29,8 @@ jobs:
         id: "version"
         run: |
           ESPANSO_VERSION=$(grep '^version' espanso/Cargo.toml | awk -F '"' '{ print $2 }')
-          echo version: $ESPANSO_VERSION
-          echo "::set-output name=version::v$ESPANSO_VERSION"
+          echo version: ${ESPANSO_VERSION}
+          echo "::set-output name=version::v${ESPANSO_VERSION}"
 
   create-release:
     name: create-release
@@ -44,12 +44,12 @@ jobs:
         run: |
           COMMIT_HASH=$(git rev-list --max-count=1 HEAD)
           echo "Creating release: ${{ needs.extract-version.outputs.espanso_version }}"
-          echo "for hash: $COMMIT_HASH"
+          echo "for hash: ${COMMIT_HASH}"
           gh release create ${{ needs.extract-version.outputs.espanso_version }} \
             -t ${{ needs.extract-version.outputs.espanso_version }} \
             --notes "Automatically released by CI" \
             --prerelease \
-            --target $COMMIT_HASH
+            --target "${COMMIT_HASH}"
 
   windows:
     needs: ["extract-version", "create-release"]
@@ -218,13 +218,13 @@ jobs:
           MACOS_CERTIFICATE_NAME: ${{ secrets.PROD_MACOS_CERTIFICATE_NAME }}
           MACOS_CI_KEYCHAIN_PWD: ${{ secrets.PROD_MACOS_CI_KEYCHAIN_PWD }}
         run: |
-          echo "${MACOS_CERTIFICATE}" | base64 --decode > certificate.p12
-          security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" buildespanso.keychain 
+          base64 --decode --output certificate.p12  <<< "${MACOS_CERTIFICATE}"
+          security create-keychain -p "${MACOS_CI_KEYCHAIN_PWD}" buildespanso.keychain
           security default-keychain -s buildespanso.keychain
-          security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" buildespanso.keychain
-          security import certificate.p12 -k buildespanso.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" buildespanso.keychain
-          /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime target/mac/Espanso.app -v
+          security unlock-keychain -p "${MACOS_CI_KEYCHAIN_PWD}" buildespanso.keychain
+          security import certificate.p12 -k buildespanso.keychain -P "${MACOS_CERTIFICATE_PWD}" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "${MACOS_CI_KEYCHAIN_PWD}" buildespanso.keychain
+          /usr/bin/codesign --force -s "${MACOS_CERTIFICATE_NAME}" --options runtime target/mac/Espanso.app -v
       - name: "Notarize executable"
         env:
           PROD_MACOS_NOTARIZATION_APPLE_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_APPLE_ID }}
@@ -232,7 +232,11 @@ jobs:
           PROD_MACOS_NOTARIZATION_PWD: ${{ secrets.PROD_MACOS_NOTARIZATION_PWD }}
         run: |
           echo "Create keychain profile"
-          xcrun notarytool store-credentials "espanso-notarytool-profile" --apple-id "$PROD_MACOS_NOTARIZATION_APPLE_ID" --team-id "$PROD_MACOS_NOTARIZATION_TEAM_ID" --password "$PROD_MACOS_NOTARIZATION_PWD"
+          xcrun notarytool \
+            store-credentials espanso-notarytool-profile \
+            --apple-id "${PROD_MACOS_NOTARIZATION_APPLE_ID}" \
+            --team-id "${PROD_MACOS_NOTARIZATION_TEAM_ID}" \
+            --password "${PROD_MACOS_NOTARIZATION_PWD}"
 
           echo "Creating temp notarization archive"
           ditto -c -k --keepParent "target/mac/Espanso.app" "notarization.zip"
