@@ -7,6 +7,15 @@ readonly INSTALLER_NAME="Espanso-Win-Installer"
 readonly TARGET_DIR="target/windows/installer"
 readonly RESOURCE_DIR="target/windows/resources"
 
+log() {
+  printf '%s\n' "$*"
+}
+
+err() {
+  log "$*"
+  exit 1
+}
+
 toml_value_for_key_in_section() {
   local key=$1
   local section=$2
@@ -30,16 +39,19 @@ main() {
   # Create the target directory
   mkdir -p "${TARGET_DIR}"
 
-  # // Check InnoSetup
-  # Command::new("iscc").output().expect("Could not find Inno Setup compiler. Please install it from here: http://www.jrsoftware.org/isdl.php");
-
   local project_path=$(pwd)
   local script_resources_path=${project_path}/scripts/resources/windows
   local template_path=${script_resources_path}/setupscript.iss
-
   local template=$(< "${template_path}")
 
   local espanso_toml_path=${project_path}/espanso/Cargo.toml
+
+  test -f "${espanso_toml_path}" || {
+    log "pwd is: $(pwd)"
+    find . -ls
+    err "espanso_toml_path does not exist"
+  }
+
   local arch=$(arch)
 
   local version=$(toml_value_for_key_in_section version package "${espanso_toml_path}")
