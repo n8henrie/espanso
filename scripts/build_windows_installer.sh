@@ -33,7 +33,8 @@ main() {
   # // Check InnoSetup
   # Command::new("iscc").output().expect("Could not find Inno Setup compiler. Please install it from here: http://www.jrsoftware.org/isdl.php");
 
-  local script_resources_path=./scripts/resources/windows
+  local project_path=$(pwd)
+  local script_resources_path=${project_path}/scripts/resources/windows
   local template_path=${script_resources_path}/setupscript.iss
 
   local template=$(< "${template_path}")
