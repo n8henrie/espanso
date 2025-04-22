@@ -16,6 +16,10 @@ main() {
   echo "Building AppImage into ${OUTPUT_DIR}"
   pushd "${OUTPUT_DIR}"
 
+  # TODO
+  find "${BASE_DIR}" -ls
+  find "${BASE_DIR}" -path "*/*${EXEC_PATH}*/*" -ls
+
   linuxdeploy=$(find "${BASE_DIR}"/scripts/vendor-app-image -maxdepth 1 -name 'linuxdeploy*.AppImage' -print -quit)
   "${linuxdeploy}" --appimage-extract-and-run -e "${BASE_DIR}/${EXEC_PATH}" \
     -d "${BASE_DIR}/espanso/src/res/linux/espanso.desktop" \

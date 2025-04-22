@@ -46,6 +46,7 @@ main() {
 
   local espanso_toml_path=${project_path}/espanso/Cargo.toml
 
+  # TODO
   if test -f "${espanso_toml_path}"; then
     cat "${espanso_toml_path}"
   else
