@@ -3,23 +3,32 @@
 set -Eeuf -o pipefail
 set -x
 
-echo "Testing espanso..."
-cd espanso
-cargo test \
-  --release \
-  --workspace \
-  --exclude espanso-modulo \
-  --exclude espanso-ipc \
-  --no-default-features \
-  --features native-tls
+log() {
+  printf '%s\n' "$*" >&2
+}
 
-echo "Building espanso and creating AppImage"
-bash ./scripts/create_app_image.sh
+main() {
+  log "Testing espanso..."
+  pushd espanso
+  cargo test \
+    --release \
+    --workspace \
+    --exclude espanso-modulo \
+    --exclude espanso-ipc \
+    --no-default-features \
+    --features native-tls
 
-cd ..
-cp espanso/target/linux/AppImage/out/Espanso-*.AppImage Espanso-X11.AppImage
-sha256sum Espanso-X11.AppImage > Espanso-X11.AppImage.sha256.txt
-ls -la
+  log "Building espanso and creating AppImage"
+  bash ./scripts/create_app_image.sh
 
-echo "Copying to mounted volume"
-cp Espanso-X11* /shared
+  popd
+
+  find 'espanso/target/linux/AppImage/out' -maxdepth 1 -name 'Espanso-*.AppImage' -exec cp {} Espanso-X11.AppImage \; quit
+
+  sha256sum Espanso-X11.AppImage > Espanso-X11.AppImage.sha256.txt
+  ls -la
+
+  log "Copying to mounted volume"
+  find . -maxdepth 1 -name 'Espanso-X11*' -exec cp {} /shared \; -quit
+}
+main "@"
