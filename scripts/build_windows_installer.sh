@@ -19,17 +19,20 @@ err() {
 toml_value_for_key_in_section() {
   local key=$1
   local section=$2
-  local filename=$3
-  awk -F= -v key="^${key}" -v "section=[${section}]" '
-    $0 ~ section { flag++ }
-    flag && $0 ~ regex {
-      value=$2
-      sub(/ *"?/, "", value)
-      sub(/"$/, "", value)
-      print value
-      exit
-    }
-  ' "${filename}"
+  awk \
+    -F= \
+    -v key="^${key} =" \
+    -v section="^\\\[${section}\\\]" \
+    '
+      flag && $0 ~ key {
+        value=$2
+        sub(/^ *"?/, "", value)
+        sub(/"$/, "", value)
+        print value
+        exit
+      }
+      $0 ~ section { flag++ }
+    '
 }
 
 main() {
