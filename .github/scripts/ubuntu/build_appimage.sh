@@ -11,14 +11,19 @@ main() {
   log "Testing espanso..."
   pushd espanso
   cargo test \
-    --release \
     --workspace \
     --exclude espanso-modulo \
     --exclude espanso-ipc \
     --no-default-features \
-    --features native-tls
+    --features modulo,vendored-tls \
+    --release
 
   log "Building espanso and creating AppImage"
+  cargo build \
+    -p espanso \
+    --no-default-features \
+    --features modulo,vendored-tls \
+    --release
   bash ./scripts/create_app_image.sh
 
   popd
