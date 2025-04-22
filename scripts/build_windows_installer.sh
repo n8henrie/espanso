@@ -62,7 +62,12 @@ main() {
 
   local version=$(toml_value_for_key_in_section version package < "${espanso_toml_path}")
   local homepage=$(toml_value_for_key_in_section homepage package < "${espanso_toml_path}")
+
   local license=${project_path}/LICENSE
+  #TODO
+  find "${project_path}" -name 'LICENSE' -ls
+  find "${project_path}" -ls
+
   local icon=${script_resources_path}/icon.ico
   local cli_helper=${script_resources_path}/espanso.cmd
   local exec_path=${RESOURCE_DIR}/espansod.exe
@@ -86,6 +91,8 @@ main() {
   local iss_setup=${TARGET_DIR}/setupscript.iss
   echo "${template}" > "${iss_setup}"
 
+  # TODO
+  # Could not read "D:\a\espanso\espanso\target\windows\installer\/d/a/espanso/espanso/LICENSE".
   iscc "${iss_setup}"
 }
 main "$@"
