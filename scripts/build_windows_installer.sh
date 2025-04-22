@@ -8,7 +8,7 @@ readonly TARGET_DIR="target/windows/installer"
 readonly RESOURCE_DIR="target/windows/resources"
 
 log() {
-  printf '%s\n' "$*"
+  printf '%s\n' "$*" >&2
 }
 
 err() {
