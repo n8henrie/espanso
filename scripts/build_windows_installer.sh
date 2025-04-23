@@ -35,6 +35,12 @@ toml_value_for_key_in_section() {
     '
 }
 
+# convert /d/a/espanso/espanso/LICENSE
+# to      D:\a\espanso\espanso\LICENSE
+winpath() {
+  sed 's|^/\([a-zA-Z]\)|\U\1:|; s|/|\\|g'
+}
+
 main() {
   # Clean the target directory
   rm -rf -- "${TARGET_DIR}"
@@ -63,18 +69,15 @@ main() {
   local version=$(toml_value_for_key_in_section version package < "${espanso_toml_path}")
   local homepage=$(toml_value_for_key_in_section homepage package < "${espanso_toml_path}")
 
-  local license=$(wslpath "/mnt/${project_path}/LICENSE")
+  local license=$(winpath <<< "${project_path}/LICENSE")
 
-  #TODO
-  find "${project_path}" -name 'LICENSE' -ls
-  find "${project_path}" -ls
-
-  local icon=${script_resources_path}/icon.ico
-  local cli_helper=${script_resources_path}/espanso.cmd
-  local exec_path=${RESOURCE_DIR}/espansod.exe
+  local icon=$(winpath <<< "${script_resources_path}/icon.ico")
+  local cli_helper=$(winpath <<< "${script_resources_path}/espanso.cmd")
+  local exec_path=$(winpath <<< "${RESOURCE_DIR}"/espansod.exe)
   include_paths=""
   while read -r dll; do
-    include_paths+="Source: \"${dll}\"; DestDir: \"{{app}}\"; Flags: ignoreversion\r\n",
+    local winpath_dll=$(winpath <<< "${dll}")
+    include_paths+="Source: \"${winpath_dll}\"; DestDir: \"{{app}}\"; Flags: ignoreversion\r\n",
   done < <(find "${RESOURCE_DIR}" -name '*.dll')
 
   : "${template//"{{{app_version}}}"/"${version}"}"
@@ -90,10 +93,11 @@ main() {
   template=${_}
 
   local iss_setup=${TARGET_DIR}/setupscript.iss
-  echo "${template}" > "${iss_setup}"
+  printf '%s' "${template}" > "${iss_setup}"
 
-  # TODO
-  # Could not read "D:\a\espanso\espanso\target\windows\installer\/d/a/espanso/espanso/LICENSE".
+  #TODO
+  cat -n "${iss_setup}"
+
   iscc "${iss_setup}"
 }
 main "$@"
