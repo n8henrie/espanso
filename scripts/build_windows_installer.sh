@@ -57,7 +57,7 @@ main() {
 
   # TODO
   log "pwd is: $(pwd)"
-  find / -type d -path "*/${RESOURCE_DIR}" -ls -quit
+  find /d -type d -path "*/${RESOURCE_DIR}" -ls -quit
 
   local arch=$(arch)
 
