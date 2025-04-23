@@ -63,7 +63,8 @@ main() {
   local version=$(toml_value_for_key_in_section version package < "${espanso_toml_path}")
   local homepage=$(toml_value_for_key_in_section homepage package < "${espanso_toml_path}")
 
-  local license=${project_path}/LICENSE
+  local license=$(wslpath "/mnt/${project_path}/LICENSE")
+
   #TODO
   find "${project_path}" -name 'LICENSE' -ls
   find "${project_path}" -ls
