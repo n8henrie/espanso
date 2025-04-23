@@ -34,6 +34,6 @@ main() {
   ls -la
 
   log "Copying to mounted volume"
-  find . -maxdepth 1 -name 'Espanso-X11*' -exec cp {} /shared \; -quit
+  find . -maxdepth 1 -name 'Espanso-X11*' -exec cp -t /shared {} +
 }
 main "@"
