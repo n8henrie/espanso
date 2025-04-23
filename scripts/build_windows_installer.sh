@@ -56,13 +56,8 @@ main() {
   local espanso_toml_path=${project_path}/espanso/Cargo.toml
 
   # TODO
-  if test -f "${espanso_toml_path}"; then
-    cat "${espanso_toml_path}"
-  else
-    log "pwd is: $(pwd)"
-    find . -ls
-    err "espanso_toml_path does not exist"
-  fi
+  log "pwd is: $(pwd)"
+  find / -type d -path "*/${RESOURCE_DIR}" -ls -quit
 
   local arch=$(arch)
 
