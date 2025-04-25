@@ -13,6 +13,7 @@ err() {
 }
 
 readonly TARGET_DIR="target/windows/resources"
+
 main() {
   if test -z "${EXEC_PATH:-}"; then
     err "EXEC_PATH is a required environment variable for this script"

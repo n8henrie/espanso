@@ -57,7 +57,17 @@ main() {
 
   # TODO
   log "pwd is: $(pwd)"
-  find /d -type d -path "*/${RESOURCE_DIR}" -ls -quit
+  find .. -type d -path "*/${RESOURCE_DIR}" -ls -quit
+
+  local fake=$(realpath ../"${RESOURCE_DIR}")
+  test -d "${fake}" && echo yup || echo nope
+
+  # pwd is: /d/a/espanso/espanso
+  # readonly RESOURCE_DIR="target/windows/resources"
+  # exists: /d/a/espanso/espanso/target/windows/resources
+  # Error on line 39 in D:\a\espanso\espanso\target\windows\installer\setupscript.iss:
+  # Source file "D:\a\espanso\espanso\target\windows\installer\target\windows\resources\espansod.exe" does not exist.
+  # local exec_path=$(winpath <<< "${RESOURCE_DIR}"/espansod.exe)
 
   local arch=$(arch)
 
