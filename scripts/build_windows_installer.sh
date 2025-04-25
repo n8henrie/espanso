@@ -57,9 +57,9 @@ main() {
 
   # TODO
   log "pwd is: $(pwd)"
-  find .. -type d -path "*/${RESOURCE_DIR}" -ls -quit
+  find . -type d -path "*/${RESOURCE_DIR}" -ls -quit
 
-  local fake=$(realpath ../"${RESOURCE_DIR}")
+  local fake=$(realpath ./"${RESOURCE_DIR}")
   test -d "${fake}" && echo yup || echo nope
 
   # pwd is: /d/a/espanso/espanso
