@@ -5,7 +5,7 @@ set -x
 
 readonly INSTALLER_NAME="Espanso-Win-Installer"
 readonly TARGET_DIR="target/windows/installer"
-readonly RESOURCE_DIR="../target/windows/resources"
+readonly RESOURCE_DIR="target/windows/resources"
 
 log() {
   printf '%s\n' "$*" >&2
