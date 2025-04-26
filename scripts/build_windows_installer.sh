@@ -4,8 +4,8 @@ set -Eeuf -o pipefail
 set -x
 
 readonly INSTALLER_NAME="Espanso-Win-Installer"
-readonly TARGET_DIR="target/windows/installer"
-readonly RESOURCE_DIR="target/windows/resources"
+readonly TARGET_DIR=$(realpath ./target/windows/installer)
+readonly RESOURCE_DIR=$(realpath ./target/windows/resources)
 
 log() {
   printf '%s\n' "$*" >&2
@@ -79,6 +79,8 @@ main() {
   local icon=$(winpath <<< "${script_resources_path}/icon.ico")
   local cli_helper=$(winpath <<< "${script_resources_path}/espanso.cmd")
   local exec_path=$(winpath <<< "${RESOURCE_DIR}"/espansod.exe)
+  local output_dir=$(winpath <<< "${TARGET_DIR}")
+
   include_paths=""
   while read -r dll; do
     local winpath_dll=$(winpath <<< "${dll}")
@@ -90,7 +92,7 @@ main() {
   : "${_//"{{{app_license}}}"/"${license}"}"
   : "${_//"{{{app_icon}}}"/"${icon}"}"
   : "${_//"{{{cli_helper}}}"/"${cli_helper}"}"
-  : "${_//"{{{output_dir}}}"/"${TARGET_DIR}"}"
+  : "${_//"{{{output_dir}}}"/"${output_dir}"}"
   : "${_//"{{{output_name}}}"/"${INSTALLER_NAME}-${arch}"}"
   : "${_//"{{{executable_path}}}"/"${exec_path}"}"
   : "${_//"{{{dll_include}}}"/"${include_paths}"}"
