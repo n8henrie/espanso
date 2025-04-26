@@ -57,6 +57,7 @@ main() {
 
   # TODO
   find "${RESOURCE_DIR}" -name "espansod.exe" -ls -quit
+  find / -name "espansod.exe" -ls -quit
 
   # pwd is: /d/a/espanso/espanso
   # readonly RESOURCE_DIR="target/windows/resources"
