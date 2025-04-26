@@ -56,11 +56,7 @@ main() {
   local espanso_toml_path=${project_path}/espanso/Cargo.toml
 
   # TODO
-  log "pwd is: $(pwd)"
-  find . -type d -path "*/${RESOURCE_DIR}" -ls -quit
-
-  local fake=$(realpath ./"${RESOURCE_DIR}")
-  test -d "${fake}" && echo yup || echo nope
+  find "${RESOURCE_DIR}" -name "espansod.exe" -ls -quit
 
   # pwd is: /d/a/espanso/espanso
   # readonly RESOURCE_DIR="target/windows/resources"
