@@ -35,7 +35,7 @@ main() {
 
   find "${tooldir}" -name '*.dll' -exec cp -t "${TARGET_DIR}" {} +
 
-  cp "${EXEC_PATH}" "${TARGET_DIR}/espandod.exe"
+  cp "${EXEC_PATH}" "${TARGET_DIR}/espansod.exe"
 
   echo '@"%~dp0espansod.exe" %*' > "${TARGET_DIR}/espanso.cmd"
 }
