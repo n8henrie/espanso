@@ -81,7 +81,7 @@ main() {
   include_paths=""
   while read -r dll; do
     local winpath_dll=$(winpath <<< "${dll}")
-    include_paths+="Source: \"${winpath_dll}\"; DestDir: \"{{app}}\"; Flags: ignoreversion\r\n",
+    include_paths+="Source: \"${winpath_dll}\"; DestDir: \"{{app}}\"; Flags: ignoreversion"$'\r\n'
   done < <(find "${RESOURCE_DIR}" -name '*.dll')
 
   : "${template//"{{{app_version}}}"/"${version}"}"
